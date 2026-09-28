@@ -1,4 +1,4 @@
-# Sentence-BERT (SBERT) Paper Reproduction
+# Sentence-BERT (SBERT) Paper 
 
 *A complete reproduction and experimental analysis of the EMNLP 2019 paper.*
 
