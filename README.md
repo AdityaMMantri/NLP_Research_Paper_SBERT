@@ -1,8 +1,3 @@
-
-# Project Title
-
-A brief description of what this project does and who it's for
-
 # Sentence-BERT (SBERT) Paper Reproduction
 
 *A complete reproduction and experimental analysis of the EMNLP 2019 paper*
@@ -93,11 +88,33 @@ SBERT is trained using three different objectives depending on the downstream ta
 
 ### Classification Objective
 
-<p align="center"><img src="https://latex.codecogs.com/svg.image?o=softmax(W(u,v,|u-v|))"></p>
+The classification objective concatenates the two sentence embeddings with their absolute element-wise difference before applying a softmax classifier.
+
+$$
+o=\text{softmax}\left(W_t(u,v,|u-v|)\right)
+$$
+
+where:
+
+- $u$ = sentence embedding of sentence A
+- $v$ = sentence embedding of sentence B
+- $W_t$ = trainable weight matrix
+- $o$ = predicted class probabilities
 
 ### Triplet Loss
 
-<p align="center"><img src="https://latex.codecogs.com/svg.image?L=max(||a-p||-||a-n||+margin,0)"></p>
+For triplet training, SBERT minimizes the distance between an anchor and a positive sentence while maximizing the distance to a negative sentence.
+
+$$
+\max\left(\|s_a-s_p\|-\|s_a-s_n\|+\epsilon,0\right)
+$$
+
+where:
+
+- $s_a$ = anchor embedding
+- $s_p$ = positive embedding
+- $s_n$ = negative embedding
+- $\epsilon$ = margin (set to 1 in the original paper)
 
 ---
 
@@ -281,30 +298,6 @@ SentEval evaluates whether sentence embeddings transfer effectively to downstrea
 
 ---
 
-# Table 6 — Pooling Strategy Ablation
-
-The paper compares three pooling strategies.
-
-## Paper Results
-
-| Pooling Strategy | NLI | STSb |
-|------------------|------|------|
-| Mean | **80.78** | **87.44** |
-| Max | 79.07 | 69.92 |
-| CLS | 79.80 | 86.62 |
-
-### Visualization
-
-<p align="center">
-  <img src="charts/fig6_summary_differences.png" width="900">
-</p>
-
-### Key Finding
-
-Mean pooling consistently produces the strongest sentence embeddings, validating the paper's default design choice.
-
----
-
 # Overall Performance Summary
 
 | Experiment | Approximate Difference |
@@ -318,7 +311,7 @@ Mean pooling consistently produces the strongest sentence embeddings, validating
 ### Overall Comparison
 
 <p align="center">
-<img src="charts/summary.png" width="900">
+  <img src="charts/fig6_summary_differences.png" width="900">
 </p>
 
 The reproduced implementation consistently follows the original paper's trends while remaining within approximately **1–1.5 points** across nearly every benchmark.
