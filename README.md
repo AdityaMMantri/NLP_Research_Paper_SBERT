@@ -1,10 +1,10 @@
 # Sentence-BERT (SBERT) Paper Reproduction
 
-*A complete reproduction and experimental analysis of the EMNLP 2019 paper*
+*A complete reproduction and experimental analysis of the EMNLP 2019 paper.*
 
 **Sentence-BERT: Sentence Embeddings using Siamese BERT Networks**
 
-> **Authors:** Nils Reimers & Iryna Gurevych  
+> **Authors:** Nils Reimers & Iryna Gurevych
 > **Conference:** EMNLP-IJCNLP 2019
 
 ---
@@ -30,7 +30,6 @@ This project reproduces and validates the principal experiments from the SBERT p
 - Argument Facet Similarity (Table 3)
 - Wikipedia Section Triplets (Table 4)
 - SentEval Transfer Tasks (Table 5)
-- Pooling Strategy Ablation (Table 6)
 - Multi-seed reproducibility analysis
 
 Each experiment compares:
@@ -45,20 +44,37 @@ Each experiment compares:
 ## Repository Structure
 
 ```text
-.
 ├── charts/
-│   ├── table1_sts.png
-│   ├── table2_stsb.png
-│   ├── table3_afs.png
-│   ├── table4_wikisec.png
-│   ├── table5_senteval.png
-│   ├── table6_pooling.png
-│   └── summary.png
+│   ├── chart.py
+│   ├── fig1_table1_unsupervised_sts.png
+│   ├── fig2_table2_stsb_supervised.png
+│   ├── fig3_table3_afs.png
+│   ├── fig4_table4_wikisec.png
+│   ├── fig5_table5_senteval.png
+│   ├── fig6_summary_differences.png
+│   └── fig7_archi.png
 │
 ├── notebooks/
-│   ├── ...
-│   └── ...
+│   ├── TABLE-1/
+│   │   ├── SBERT_NLI_base/
+│   │   └── SRoBERTa_NLI_base/
+│   │
+│   ├── TABLE-2/
+│   │   ├── SBERT_STSb_base/
+│   │   ├── SBERT_NLI_STSb_base/
+│   │   ├── SRoBERTa_STSb_base/
+│   │   └── SRoBERTa-NLI-STSb-base/
+│   │
+│   ├── TABLE-3/
+│   │   └── SBERT_AFS_base/
+│   │
+│   ├── TABLE-4/
+│   │   └── SBERT_WikiSec_base/
+│   │
+│   └── TABLE-5/
+│       └── SBERT_NLI_base/
 │
+├── .gitignore
 ├── Data_Verification.ipynb
 ├── D19-1410.pdf
 └── README.md
@@ -135,13 +151,7 @@ The implementation follows the original SBERT training configuration as closely 
 
 # Results
 
-Every reproduced experiment is presented using the following format:
-
-- Original paper table
-- Reproduced numerical results
-- Performance difference
-- Visualization
-- Short analysis
+Each reproduced experiment includes the original paper values, the reproduced implementation, and the corresponding visualization.
 
 ---
 
@@ -151,22 +161,22 @@ This experiment evaluates sentence embeddings on seven Semantic Textual Similari
 
 ## Paper vs Replication
 
-| Dataset | Paper | Replicated | Difference |
-|---------|-------|------------|------------|
-| STS12 | 70.97 | 70.66 | -0.31 |
-| STS13 | 76.53 | 72.78 | -3.75 |
-| STS14 | 73.19 | 70.66 | -2.53 |
-| STS15 | 79.09 | 78.87 | -0.22 |
-| STS16 | 74.30 | 73.36 | -0.94 |
-| STSb | 77.03 | 75.43 | -1.60 |
-| SICK-R | 72.91 | 75.91 | +3.00 |
+| Dataset | SBERT Paper | SBERT Replicated | Δ | SRoBERTa Paper | SRoBERTa Replicated | Δ |
+|---------|------------:|-----------------:|--:|---------------:|--------------------:|--:|
+| STS12 | 70.97 | 70.66 | -0.31 | 71.54 | 72.61 | +1.07 |
+| STS13 | 76.53 | 72.78 | -3.75 | 72.49 | 73.98 | +1.49 |
+| STS14 | 73.19 | 70.66 | -2.53 | 70.80 | 72.29 | +1.49 |
+| STS15 | 79.09 | 78.87 | -0.22 | 78.74 | 79.58 | +0.84 |
+| STS16 | 74.30 | 73.36 | -0.94 | 73.69 | 74.59 | +0.90 |
+| STSb | 77.03 | 75.43 | -1.60 | 77.77 | 78.14 | +0.37 |
+| SICK-R | 72.91 | 75.91 | +3.00 | 74.46 | 74.24 | -0.22 |
 
 ### Average Performance
 
-| Model | Paper | Replicated |
-|--------|--------|------------|
-| SBERT-NLI-base | **74.89** | **73.88** |
-| SRoBERTa-base | **74.21** | **75.06** |
+| Model | Paper | Replicated | Difference |
+|--------|------:|-----------:|-----------:|
+| **SBERT-NLI-base** | **74.89** | **73.88** | **-1.01** |
+| **SRoBERTa-NLI-base** | **74.21** | **75.06** | **+0.85** |
 
 ### Visualization
 
@@ -184,16 +194,16 @@ This experiment evaluates sentence embeddings on seven Semantic Textual Similari
 
 # Table 2 — STS Benchmark (Supervised)
 
-This experiment fine-tunes SBERT on the STS Benchmark.
+This experiment fine-tunes SBERT on the STS Benchmark using 10 random seeds.
 
 ## Paper vs Replication
 
-| Model | Paper | Replicated | Difference |
-|---------|--------|------------|------------|
-| SBERT-STSb-base | 84.67 | 84.07 | -0.60 |
-| SRoBERTa-STSb-base | 84.92 | 85.14 | +0.22 |
-| SBERT-NLI-STSb-base | 85.35 | 84.51 | -0.84 |
-| SRoBERTa-NLI-STSb-base | 84.79 | 85.14 | +0.35 |
+| Model | Training Setup | Paper (Mean ± SD) | Replicated (Mean ± SD) | Difference |
+|-------|----------------|------------------:|------------------------:|-----------:|
+| SBERT-STSb-base | STSb only | 84.67 ± 0.19 | 84.07 ± 0.49 | -0.60 |
+| SRoBERTa-STSb-base | STSb only | 84.92 ± 0.34 | 85.14 ± 0.19 | +0.22 |
+| SBERT-NLI-STSb-base | NLI → STSb | 85.35 ± 0.17 | 84.51 ± 0.47 | -0.84 |
+| SRoBERTa-NLI-STSb-base | NLI → STSb | 84.79 ± 0.38 | 85.14 ± 0.18 | +0.35 |
 
 ### Visualization
 
@@ -209,18 +219,16 @@ This experiment fine-tunes SBERT on the STS Benchmark.
 
 ---
 
-# Table 3 — Argument Facet Similarity
+# Table 3 — Argument Facet Similarity (SBERT-AFS-base)
 
-The Argument Facet Similarity dataset measures similarity between arguments rather than ordinary sentences.
+This experiment evaluates **SBERT-AFS-base** on the Argument Facet Similarity benchmark using both 10-fold cross-validation and cross-topic evaluation.
 
 ## Paper vs Replication
 
-| Evaluation | Metric | Paper | Replicated |
-|------------|---------|--------|------------|
-| 10-fold | Pearson | 76.57 | 75.87 |
-| 10-fold | Spearman | 74.13 | 73.21 |
-| Cross-topic | Pearson | 52.34 | 51.21 |
-| Cross-topic | Spearman | 50.65 | 49.20 |
+| Evaluation | Paper Pearson | Replicated Pearson | Δ | Paper Spearman | Replicated Spearman | Δ |
+|------------|--------------:|-------------------:|--:|---------------:|--------------------:|--:|
+| 10-fold Cross-Validation | 76.57 | 75.87 | -0.70 | 74.13 | 73.21 | -0.92 |
+| Cross-topic | 52.34 | 51.21 | -1.13 | 50.65 | 49.20 | -1.45 |
 
 ### Visualization
 
@@ -236,18 +244,15 @@ The Argument Facet Similarity dataset measures similarity between arguments rath
 
 ---
 
-# Table 4 — Wikipedia Section Triplets
+# Table 4 — Wikipedia Section Triplets (SBERT-WikiSec-base)
 
-SBERT is trained using triplet loss on approximately **1.8 million** Wikipedia triplets.
+This experiment trains **SBERT-WikiSec-base** using triplet loss on approximately **1.8 million** Wikipedia triplets.
 
 ## Paper vs Replication
 
-| Model | Accuracy |
-|--------|----------|
-| Paper | **80.42%** |
-| Replicated | **79.00%** |
-
-Difference: **-1.42%**
+| Model | Paper | Replicated | Difference |
+|-------|------:|-----------:|-----------:|
+| **SBERT-WikiSec-base** | **80.42%** | **79.00%** | **-1.42%** |
 
 ### Visualization
 
@@ -262,27 +267,27 @@ Difference: **-1.42%**
 
 ---
 
-# Table 5 — SentEval Transfer Learning
+# Table 5 — SentEval Transfer Learning (SBERT-NLI-base)
 
-SentEval evaluates whether sentence embeddings transfer effectively to downstream classification tasks.
+This experiment evaluates **SBERT-NLI-base** sentence embeddings on downstream transfer tasks using the SentEval evaluation toolkit.
 
 ## Paper vs Replication
 
-| Task | Paper | Replicated |
-|------|--------|------------|
-| MR | 83.64 | 82.14 |
-| CR | 89.43 | 88.77 |
-| SUBJ | 94.39 | 93.09 |
-| MPQA | 89.86 | 89.91 |
-| SST | 88.96 | 88.41 |
-| TREC | 89.60 | 88.00 |
-| MRPC | 76.00 | 76.23 |
+| Task | Paper | Replicated | Difference |
+|------|------:|-----------:|-----------:|
+| MR | 83.64 | 82.14 | -1.50 |
+| CR | 89.43 | 88.77 | -0.66 |
+| SUBJ | 94.39 | 93.09 | -1.30 |
+| MPQA | 89.86 | 89.91 | +0.05 |
+| SST | 88.96 | 88.41 | -0.55 |
+| TREC | 89.60 | 88.00 | -1.60 |
+| MRPC | 76.00 | 76.23 | +0.23 |
 
-### Average
+### Average Performance
 
-| Paper | Replicated |
-|--------|------------|
-| **87.41** | **86.65** |
+| Model | Paper | Replicated | Difference |
+|--------|------:|-----------:|-----------:|
+| **SBERT-NLI-base** | **87.41** | **86.65** | **-0.76** |
 
 ### Visualization
 
@@ -300,13 +305,14 @@ SentEval evaluates whether sentence embeddings transfer effectively to downstrea
 
 # Overall Performance Summary
 
-| Experiment | Approximate Difference |
-|-------------|------------------------|
-| STS Average | -1.01 |
-| STSb | -0.60 |
-| AFS | ~-1 |
-| WikiSec | -1.42 |
-| SentEval | -0.76 |
+| Experiment | Model | Difference |
+|------------|-------|-----------:|
+| Table 1 | SBERT-NLI-base | -1.01 |
+| Table 1 | SRoBERTa-NLI-base | +0.85 |
+| Table 2 | SBERT-STSb-base | -0.60 |
+| Table 3 | SBERT-AFS-base | ≈ -1.00 |
+| Table 4 | SBERT-WikiSec-base | -1.42 |
+| Table 5 | SBERT-NLI-base | -0.76 |
 
 ### Overall Comparison
 
@@ -349,7 +355,6 @@ Recommended execution order:
 4. Argument Facet Similarity
 5. Wikipedia Triplets
 6. SentEval
-7. Ablation Study
 
 ---
 
